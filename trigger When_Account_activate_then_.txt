@@ -1,0 +1,21 @@
+trigger When_Account_activate_then_crete_contact on Account (After insert,after update) {
+    list<Contact>conlist = new list<Contact>();
+       For(Account acc:trigger.New)
+       {
+           if(acc.Active__c == true && acc.Type =='Customer' && acc.Active__c!=trigger.oldmap.get(acc.Id).Active__c)
+           {
+               Contact con = new Contact();
+               con.FirstName = acc.Name;
+               con.LastName = 'Customer Representative';
+               con.AccountId = acc.Id;
+               con.Phone = acc.Phone;
+               con.Email = acc.Company_Email__c;
+               conlist.add(con);
+           }
+       }
+    if(!conlist.isEmpty())
+    {
+        insert conlist;
+    }
+}
+
